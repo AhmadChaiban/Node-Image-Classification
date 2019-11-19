@@ -9,8 +9,15 @@
   "author": "Tejas Rathod",
   "license": "ISC",
   "dependencies": {
+    "@tensorflow-models/knn-classifier": "^1.2.1",
     "@tensorflow-models/mobilenet": "^2.0.4",
-    "@tensorflow/tfjs": "^1.2.10",
-    "@tensorflow/tfjs-node": "^1.2.10"
+    "@tensorflow/tfjs": "^1.2.11",
+    "@tensorflow/tfjs-core": "^1.2.11",
+    "@tensorflow/tfjs-node": "^1.2.11",
+    "glob": "^7.1.6",
+    "ml5": "^0.4.3"
+  },
+  "devDependencies": {
+    "esm": "^3.2.25"
   }
 }
