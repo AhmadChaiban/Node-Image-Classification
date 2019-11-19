@@ -33,23 +33,23 @@ const readImage = path => {
   //it returns a 3D or 4D tensor of the decoded image. Supports BMP, GIF, JPEG and PNG formats.
   var tfimage = tfnode.node.decodeImage(imageBuffer);
   
-  const smalImg = tf.image.resizeBilinear(tfimage, [368, 432]); 
-  //All images being trained are being resized to a custom size. 
+  const smalImg = tf.image.resizeBilinear(tfimage, [368, 432]); //Please not that for both cases, depending on the set of images, this size can be changed.
+ 
+  //All images being trained are being resized to a custom size, which can be changed to what is suitable.
 
   const resized = tf.cast(smalImg, 'float32'); //casting the image to float32
   const t4d = tf.tensor4d(Array.from(resized.dataSync()),[1,368,432,3]);  //Creating a 4d tensor for the classifier
   return t4d;
 }
 
-
-var mainDirectory = "./img_samples/";    //Main directory that allows for the specification of the main folder of images
+var mainDirectory = "./img_samples/"; //Main directory that allows for the specification of the main folder of images
 
 const imageClassification = async path => {
 
-  const classifier = await knnClassifier.create();    //Creating a KNN classifier here           
+  const classifier = await knnClassifier.create(); //Creating a KNN classifier here           
   
   // Loading the trained model.
-  const model = await mobilenet.load();    // loading the model here
+  const model = await mobilenet.load();  //loading the model here
   
   // print results on terminal
   var folders = fs.readdirSync(mainDirectory);   //reading from the main directory.
@@ -66,17 +66,22 @@ const imageClassification = async path => {
 
   for(var i=0;i<filesPerClass.length;i++){
     for(var j=0;j<filesPerClass[i].length;j++){
-      imageSample = readImage(filesPerClass[i][j]);                 //Reading each image from the path
-      activation = await model.infer(imageSample, 'conv_preds');   //Feature extraction
-      console.log('Training Class '+folders[i]+' image ' + (j+1))          //giving some feedback to the user for progress
+      imageSample = readImage(filesPerClass[i][j]); //Reading each image from the path
+      activation = await model.infer(imageSample, 'conv_preds'); //Feature extraction
+      console.log('Training Class '+folders[i]+' image ' + (j+1) +" "+filesPerClass[i][j].split("/")[3]); //giving some feedback to the user for progress
       classifier.addExample(activation,folders[i]);                        //Training the model here by addExample. Labels is 
     }                                                                      //being set as folder name.
   }  
-  const image = await readImage('./Building.jpg');   //image entered through terminal
-  var activate2 = await model.infer(image,'conv_preds'); //inferring from the model (feature extraction)
 
-  const predictionsTest = await classifier.predictClass(activate2);    //predicting and showing the results. 
-  console.log('classficationTest:',predictionsTest);
+  const testDirectory = './TestSamples/';   //Directory that houses all the images to be tested
+  var testFiles = fs.readdirSync(testDirectory);
+  for(var i=0;i<testFiles.length;i++){         //Looping over test Directory
+    var image = await readImage(testDirectory+testFiles[i]);  //Reading each image
+    var activateTest = await model.infer(image,'conv_preds');   //Feature Extraction of each image
+    var predictionsTest = await classifier.predictClass(activateTest);//Using the new model to predict 
+    console.log("");
+    console.log('Image Name: '+testFiles[i]); //printing the name of the image for clarification
+    console.log('classficationTest:',predictionsTest); //printing the results
+  }
 }
-
 imageClassification();     //Running the function here.
