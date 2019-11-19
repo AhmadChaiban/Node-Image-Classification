@@ -8,7 +8,8 @@
 //now specified in the bottom. Where the prediction is being made
 //have fun!   
 
-//Please note that after npm install, KNN-classifier is required to be installed manually, as well as @tensorflow/tfjs-node@1.2.11 which is the required version. 
+//Please note that after npm install, KNN-classifier is required to be installed manually, as well as @tensorflow/tfjs-node@1.2.11 
+//which is the required version. 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -67,11 +68,11 @@ const imageClassification = async path => {
     for(var j=0;j<filesPerClass[i].length;j++){
       imageSample = readImage(filesPerClass[i][j]);                 //Reading each image from the path
       activation = await model.infer(imageSample, 'conv_preds');   //Feature extraction
-      console.log('Training Class '+i+' image ' + (j+1))          //giving some feedback to the user for progress
-      classifier.addExample(activation,i);                        //Training the model here by addExample. 
-    }
+      console.log('Training Class '+folders[i]+' image ' + (j+1))          //giving some feedback to the user for progress
+      classifier.addExample(activation,folders[i]);                        //Training the model here by addExample. Labels is 
+    }                                                                      //being set as folder name.
   }  
-  const image = await readImage('./rabbit.jpg');   //image entered through terminal
+  const image = await readImage('./Building.jpg');   //image entered through terminal
   var activate2 = await model.infer(image,'conv_preds'); //inferring from the model (feature extraction)
 
   const predictionsTest = await classifier.predictClass(activate2);    //predicting and showing the results. 
