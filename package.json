@@ -15,7 +15,8 @@
     "@tensorflow/tfjs-core": "^1.2.11",
     "@tensorflow/tfjs-node": "^1.2.11",
     "glob": "^7.1.6",
-    "ml5": "^0.4.3"
+    "ml5": "^0.4.3",
+    "node-localstorage": "^2.1.4"
   },
   "devDependencies": {
     "esm": "^3.2.25"

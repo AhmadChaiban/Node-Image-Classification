@@ -8,8 +8,8 @@
 //now specified in the bottom. Where the prediction is being made
 //have fun!   
 
-//Please note that after npm install, KNN-classifier is required to be installed manually, as well as @tensorflow/tfjs-node@1.2.11 
-//which is the required version. 
+//Please note that after npm install, KNN-classifier is required to be installed manually, as well as 
+//@tensorflow/tfjs-node@1.2.11 which is the required version and node-localstorage requires installation.
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,6 +24,9 @@ const knnClassifier = require('./node_modules/@tensorflow-models/knn-classifier/
 
 //The fs module provides an API for interacting with the file system.
 const fs = require('fs');
+
+var LocalStorage = require("node-localstorage").LocalStorage;
+var localStorage = new LocalStorage('./');
 
 const readImage = path => {
   //reads the entire contents of a file.
@@ -44,9 +47,7 @@ const readImage = path => {
 
 var mainDirectory = "./img_samples/"; //Main directory that allows for the specification of the main folder of images
 
-const imageClassification = async path => {
-
-  const classifier = await knnClassifier.create(); //Creating a KNN classifier here           
+const imageClassification = async path => {   
   
   // Loading the trained model.
   const model = await mobilenet.load();  //loading the model here
@@ -72,16 +73,22 @@ const imageClassification = async path => {
       classifier.addExample(activation,folders[i]);                        //Training the model here by addExample. Labels is 
     }                                                                      //being set as folder name.
   }  
-
-  const testDirectory = './TestSamples/';   //Directory that houses all the images to be tested
-  var testFiles = fs.readdirSync(testDirectory);
-  for(var i=0;i<testFiles.length;i++){         //Looping over test Directory
-    var image = await readImage(testDirectory+testFiles[i]);  //Reading each image
-    var activateTest = await model.infer(image,'conv_preds');   //Feature Extraction of each image
-    var predictionsTest = await classifier.predictClass(activateTest);//Using the new model to predict 
-    console.log("");
-    console.log('Image Name: '+testFiles[i]); //printing the name of the image for clarification
-    console.log('classficationTest:',predictionsTest); //printing the results
-  }
+  saveModel(classifier,"KnnSaved");   //Saving the model using the model name.
 }
-imageClassification();     //Running the function here.
+
+function saveModel(classifier,directory){
+  let dataset = classifier.getClassifierDataset()
+  var datasetObj = {}
+  Object.keys(dataset).forEach((key) => {
+    let data = dataset[key].dataSync();
+    // use Array.from() so when JSON.stringify() it covert to an array string e.g [0.1,-0.2...] 
+    // instead of object e.g {0:"0.1", 1:"-0.2"...}
+    datasetObj[key] = Array.from(data); 
+  });
+  let jsonStr = JSON.stringify(datasetObj);
+  //can be change to other source
+  localStorage.setItem(directory, jsonStr);
+}
+
+const classifier = knnClassifier.create(); //Creating a KNN classifier here        
+imageClassification();     //Running the function here. 
