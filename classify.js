@@ -66,11 +66,15 @@ const imageClassification = async path => {
   const model = await mobilenet.load();  //loading the model here
   
   // print results on terminal
-  var folders = fs.readdirSync(mainDirectory);   //reading from the main directory.
+  var folders = fs.readdirSync(mainDirectory).filter(function(x){
+    return x.toLowerCase() != '.ds_store' && x.toLowerCase() != 'ignore-other-file.js';
+  });   //reading from the main directory.
   
   var filesPerClass = [];
   for(var i=0;i<folders.length;i++){
-    files = fs.readdirSync(mainDirectory+folders[i]);
+    files = fs.readdirSync(mainDirectory+folders[i]).filter(function(x){
+      return x.toLowerCase() != '.ds_store' && x.toLowerCase() != 'ignore-other-files.js';
+    });
     var files_complete = [];
     for(var j=0;j<files.length;j++){
       files_complete.push(mainDirectory+folders[i]+"/"+files[j]); //Getting all the image files here from each folder here.
