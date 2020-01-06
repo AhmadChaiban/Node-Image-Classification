@@ -57,3 +57,5 @@ are reloaded and after the mobile net model extracts some features, the saved KN
 
 In this case I have only allowed testing for single images. One can, however, with a simple tweak in the code, allow for testing on multiple
 images at a time. 
+
+Giving reference to @tejas77 https://github.com/tejas77/node-image-classification for his repo! Thank you!
