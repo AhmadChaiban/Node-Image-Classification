@@ -1,1 +1,0 @@
-Steps to train your own images and specify classes. 
